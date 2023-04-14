@@ -1,8 +1,10 @@
 # -*-coding:utf-8-*-
 import sys
+sys.path.append("../")
 import scrapy
 from scrapy.selector import Selector
 import json
+
 from hdf.items import CommonDoctorItem,FamousDoctorItem
  
  
@@ -58,14 +60,18 @@ class DoctorSpider(scrapy.Spider):
 
     start_urls = [hostname]
 
-
+    def __init__(self,page_index=None,page_size=None,term_id=None):
+        super(DoctorSpider, self).__init__()
+        self.page_index = page_index
+        self.page_size  = page_size
+        self.term_id    = term_id
 
     def start_requests(self):
         data = {
-            "nowPage": "3",
-            "pageSize": "15",
+            "nowPage": str(self.page_index),
+            "pageSize": str(self.page_size),
             "placeId": "",
-            "termId": "462"
+            "termId": str(self.term_id)
         }
         for url in self.start_urls:
             yield scrapy.FormRequest(url=url, formdata=data, callback=self.parse)
